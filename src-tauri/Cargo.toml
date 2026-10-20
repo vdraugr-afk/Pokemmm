@@ -1,0 +1,21 @@
+[package]
+name = "pokebonk"
+version = "1.0.0"
+description = "Contenedor de escritorio liviano para pokebonk.com"
+edition = "2021"
+rust-version = "1.77"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+
+# Optimizaciones: binario pequeño, cero grasa.
+# El rendimiento del juego vive en WebView2 (GPU); este proceso solo es la ventana.
+[profile.release]
+opt-level = "s"      # optimizar por tamaño (exe ~4-6 MB)
+lto = true           # optimización total entre crates
+codegen-units = 1    # mejor optimización, compilación más lenta (da igual en la nube)
+panic = "abort"      # sin unwinding: más chico
+strip = true         # sin símbolos de debug
