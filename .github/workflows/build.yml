@@ -1,0 +1,33 @@
+name: Build PokeBonk
+
+# Se compila automáticamente al subir cambios, o manualmente con el botón
+# "Run workflow" en la pestaña Actions.
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v4
+
+      - name: Instalar Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cachear dependencias (acelera compilaciones futuras)
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Compilar (release)
+        run: cargo build --release --manifest-path src-tauri/Cargo.toml
+
+      - name: Subir ejecutable
+        uses: actions/upload-artifact@v4
+        with:
+          name: PokeBonk-Windows
+          path: src-tauri/target/release/pokebonk.exe
+          if-no-files-found: error
